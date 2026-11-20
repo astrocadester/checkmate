@@ -1,12 +1,16 @@
-# Technical debt — architecture baseline
+# Checkmate technical debt
 
-Audit tasks, not assertions of a present defect. Preserve project-specific historical debt and sprint work.
+Native source and original ROM devices remain authoritative. Native zmac v1.3 is the only source assembler. Previous Python investigation utilities have been removed from the maintained repository.
 
-| ID | State | Required evidence |
+| ID | Status | Work / evidence required |
 | --- | --- | --- |
-| ENG-001 | Audit | Inventory host-language original-source parsers, synthetic dictionaries/word address maps and patched compiler tokens; replace with native mechanisms. |
-| ENG-002 | Audit | Trace complete original-style native source-loading/compile/runtime path and output. |
-| ENG-003 | Audit | Distinguish original behavior from necessary hardware adaptations; gain prior approval for deviations. |
-| ENG-004 | Audit | Distinguish source audits, original compiler builds, ROM integrity, MAME and hardware execution results. |
+| ENG-001 | Linux PASS; Windows pending | User executed the final-source `build.sh` with bundled zmac v1.3. `build.bat` remains untested on Windows. |
+| ENG-002 | PASS | Final-source v20261120-0006 Linux zmac build generated all four 1 KB ROMs with expected SHA-1 values and packaged `roms/checkmat.zip` (user-supplied console transcript). |
+| ENG-003 | Audit | No hardware adapters introduced. Trace board RAM and mirrored I/O ranges against diagrams. |
+| ENG-004 | Build PASS; MAME launched | SHA-1 checks PASS. MAME ran for approximately six seconds at 100% average speed; undumped `checkmat.d` warning. Visual/gameplay, Windows and physical hardware evidence remain open. |
+| RE-001 | Source naming complete; semantic review pending | All generic FLOW and SUBROUTINE labels replaced. Verify descriptive roles while tracing callers. |
+| RE-002 | Source text audit PASS; new build pending | Previous complete ASM build matched all four original SHA-1 values. Nineteen message records now use ASCII string fragments for 242 byte-identical source data bytes. Re-run zmac SHA-1 verification on this string-formatting revision. |
+| RE-003 | Selector callers documented | Three entry paths ($0621 intro, $0898 round, $0DD4 message) and all three vector tables documented; continue detailed optional language-ROM and service study. |
+| RE-004 | Pending | Match game-specific memory-map mirrors and port semantics to original board diagrams. |
 
-Close only with project-specific evidence. See ENGINEERING-RULES.md.
+Baseline project engineering requirements: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md). Continue prior native-dispatch work in [Checkmate hard RE](checkmate-hard-re-20261031.md).

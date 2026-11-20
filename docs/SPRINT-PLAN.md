@@ -36,6 +36,13 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 - [x] Explain native selector versus script interpreter with concise side-by-side table.
 - [ ] Rebuild after documentation-only ASM header/comment revisions to re-confirm ROM hashes.
 
+## Proposed language ROM reconstruction
+
+- [x] Document the `checkmat.d` reconstruction approach, known six native entry points, three message bases, native build isolation, and evidence/test gates in [checkmat-d-reconstruction-plan.md](checkmat-d-reconstruction-plan.md).
+- [ ] Complete English message-lookup and native entry/exit ABI audit.
+- [ ] Obtain explicit approval before authoring substitute Intel 8080 code or language content for the missing device.
+- [ ] On approval, implement and independently build an experimental language ROM and verify in MAME.
+
 ## Independent source-layout audit
 
 The v20261120-0004 source contains exactly 4,096 addressable bytes by static instruction-width and directive counting. All 55 unchanged labels retained their addresses. Font data begins at $0197; game graphic records at $04AB; native code at $0D4A; the language intro vectors at $0E3C; and zero-filled tail at $0FF2. The final v20261120-0006 source subsequently assembled with bundled zmac v1.3 and passed all four original device SHA-1 comparisons in the user's Linux build.

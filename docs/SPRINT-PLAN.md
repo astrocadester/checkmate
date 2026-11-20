@@ -25,6 +25,10 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 - [ ] Verify interpretation of individual game lookup records and sound routines against code and board documents.
 - [ ] Verify memory mirrors and I/O against board schematics.
 
+## Independent source-layout audit
+
+The v20261120-0004 source contains exactly 4,096 addressable bytes by static instruction-width and directive counting. All 55 unchanged labels retained their addresses. Font data begins at $0197; game graphic records at $04AB; native code at $0D4A; the language intro vectors at $0E3C; and zero-filled tail at $0FF2. This independent layout audit is distinct from an actual zmac build and SHA-1 comparison.
+
 ## PR gate
 
 State native source/toolchain, original-ROM authority, changes, actual tests, open items and deviations. Do not claim executable or emulator verification from a source-only audit. No alternate 8080 compiler, synthetic gameplay or substituted graphics without prior approval.

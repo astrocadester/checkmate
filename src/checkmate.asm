@@ -4,12 +4,20 @@
 ; Four-player arcade game for Midway Intel 8080 hardware.
 ;
 ; Developer : Dave Nutting Associates (DNA)
+; Programmer: Jay (Jamie) Fenton
+; Design    : Dave Nutting (also credited with programming)
 ; Publisher : Midway Manufacturing
 ; CPU       : Intel 8080
 ; Software  : Native game routines, RST services, language selectors
 ;
 ; ROM       : checkmat.h / checkmat.g / checkmat.f / checkmat.e
 ; Build     : zmac v1.3; four 1 KB ROM devices
+;
+; Credits: Jamie Fenton's first-person account and published gameography;
+;          Arcade History also credits Dave Nutting for design/programming.
+; References:
+;   https://www.fentonia.com/bio/
+;   https://www.arcade-history.com/game/444/checkmate
 ;*******************************************************************************
 
         ORG $0000
@@ -1599,7 +1607,8 @@ GAME_NEXT_PLAYER_COMPARISON:
         CALL DRAW_HIGH_BIT_TERMINATED_MESSAGE
         JP SHOW_INTRO_AND_PLAYER_PROMPTS
 
-; Select language intro entry.
+; Intro caller: select a native display routine from the four-entry
+; LANGUAGE_INTRO_NATIVE_VECTORS table at $0E3C, then jump to it.
 SELECT_LANGUAGE_INTRO_ENTRY:
         LD HL,$0E3C
         CALL SELECT_LANGUAGE_VECTOR
@@ -2001,7 +2010,8 @@ ROUND_DISPLAY_PARAMETER_AND_ZERO_SLOTS:
         DB $2A
         DB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Prepare round result display.
+; Round-result caller: select a native routine from
+; LANGUAGE_ROUND_NATIVE_VECTORS at $0E44, then jump to it.
 PREPARE_ROUND_RESULT_DISPLAY:
         CALL COMPUTE_VIDEO_RAM_ADDRESS
         LD ($2015),HL
@@ -3049,7 +3059,9 @@ DRAW_NEXT_ZERO_TERMINATED_CHARACTER:
         JP P,DRAW_NEXT_ZERO_TERMINATED_CHARACTER
         RET
 
-; Select language message pointer.
+; Message caller: look up a game text entry, select the language-specific
+; message-address base at $0E4C, then index the text pointer table.
+; This path returns pointers; the caller renders the selected text.
 SELECT_LANGUAGE_MESSAGE_POINTER:
         LD HL,$0E1A
         LD A,D
@@ -3062,7 +3074,10 @@ SELECT_LANGUAGE_MESSAGE_POINTER:
         POP DE
         RET
 
-; Select language vector.
+; Shared two-bit language selector: read input port $02, extract bits 5-6,
+; index the four 16-bit addresses at HL, and return the selected address
+; in HL. Intro/round callers jump through HL; message callers use it for
+; a subsequent pointer lookup.
 SELECT_LANGUAGE_VECTOR:
         IN A,($02)
         RLCA
@@ -3139,7 +3154,8 @@ LANGUAGE_ROUND_NATIVE_VECTORS:
         DW $100C
         DW $100F
 
-; Four language-specific message address words.
+; Language-specific bases for the message-address lookup ($0DD4).
+; Each entry selects a different 16-bit message-address table base.
 LANGUAGE_MESSAGE_OFFSETS:
         DW $0E24
         DW $1020

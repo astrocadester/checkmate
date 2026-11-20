@@ -1,6 +1,6 @@
 # Checkmate
 
-Checkmate was developed by Dave Nutting Associates (DNA) and released by Midway in 1977. It runs on Midway Intel 8080 arcade hardware. This project maintains the native Intel 8080 disassembly, original program ROMs, graphics and sound data, hardware documentation, and research into DNA's early game engines.
+Checkmate was developed by Dave Nutting Associates (DNA) and released by Midway in 1977. Jay (Jamie) Fenton programmed the arcade game; Dave Nutting is also credited with design and programming. It runs on Midway Intel 8080 arcade hardware. This project maintains the native Intel 8080 disassembly, original program ROMs, graphics and sound data, hardware documentation, and research into DNA's early game engines.
 
 ![Checkmate cabinet marquee](images/checkmate-24967-marquee.jpg)
 
@@ -101,9 +101,7 @@ The reset entry is at `$0000`; native interrupt routines begin at `$0008` and `$
 | `RST $20` | `$0CA8` | Advance or wrap player index |
 | `RST $28` | `$0C99` | Select indexed 16-bit pointer |
 
-The pointer helper at `$0C9C` reads a 16-bit address from a table. The language selector at `$0DE8` extracts the cabinet language setting from input port `$02` and selects one of four native routine addresses. The caller executes `JP (HL)` to enter that routine. English entries point to `$0628` and `$089F`; other entries address `checkmat.d` at `$1000–$13FF`. Here, an assembly `DW` is a 16-bit address value, while a `RST` is a one-byte call to a native service. See [native program architecture](docs/checkmate-hard-re-20261031.md) for the concise execution sequence.
-
-See [Checkmate native services and language dispatch](docs/checkmate-hard-re-20261031.md) for the full trace.
+The pointer helper at `$0C9C` reads a 16-bit address from a table. The shared language selector at `$0DE8` reads two bits of the cabinet language setting from input port `$02`. Three callers use it: the intro at `$0621` selects a routine from `$0E3C`; round-result presentation at `$0898` selects a routine from `$0E44`; and the message helper at `$0DD4` selects a language-specific text-address base from `$0E4C`. The first two callers use `JP (HL)` to execute native code; the third uses the address to find the text to display. See [native program architecture](docs/checkmate-hard-re-20261031.md).
 
 ## Graphics and text
 
@@ -113,7 +111,15 @@ The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, 
 
 Native interrupt and game services coordinate counters and hardware output ports. The original [logic and sound documentation](docs/Checkmate_Logic_and_Sound_(0615-00900_Ver_A_Dec_8_1977).pdf) is retained for further signal-level analysis.
 
+## Development credits
+
+Jamie Fenton (credited at the time as Jay Fenton) describes programming Checkmate at DNA. Arcade History also credits Dave Nutting for design and programming. These credits refer to the Intel 8080 arcade game documented here.
+
 ## References
+
+- [Jamie Fenton — biography and gameography](https://www.fentonia.com/bio/)
+- [Checkmate game credits — Arcade History](https://www.arcade-history.com/game/444/checkmate)
+- [Jamie Fenton interview on Checkmate and early DNA games](https://allincolorforaquarter.blogspot.com/2014/07/the-pre-history-of-night-driver-part-5.html)
 
 - [Checkmate native services and language dispatch](docs/checkmate-hard-re-20261031.md)
 - [Framework comparison](docs/framework-lineage.md)

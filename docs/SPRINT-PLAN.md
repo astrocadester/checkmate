@@ -31,6 +31,11 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 - [ ] Verify interpretation of individual game lookup records and sound routines against code and board documents.
 - [ ] Verify memory mirrors and I/O against board schematics.
 
+- [x] Trace all three language-selector callers at $0621, $0898 and $0DD4 and document code-jump versus message-pointer uses.
+- [x] Add evidenced arcade development credits to ASM, README and native architecture documentation.
+- [x] Explain native selector versus script interpreter with concise side-by-side table.
+- [ ] Rebuild after documentation-only ASM header/comment revisions to re-confirm ROM hashes.
+
 ## Independent source-layout audit
 
 The v20261120-0004 source contains exactly 4,096 addressable bytes by static instruction-width and directive counting. All 55 unchanged labels retained their addresses. Font data begins at $0197; game graphic records at $04AB; native code at $0D4A; the language intro vectors at $0E3C; and zero-filled tail at $0FF2. The final v20261120-0006 source subsequently assembled with bundled zmac v1.3 and passed all four original device SHA-1 comparisons in the user's Linux build.

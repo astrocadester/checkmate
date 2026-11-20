@@ -13,10 +13,11 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 - [x] Create Checkmate memory map in the supplied graphic style with a game-specific emblem.
 - [x] Clean source formatting and make selected flow labels descriptive, without altering assembly statements.
 - [x] Linux native build and original 1 KB device SHA-1 verification on v20261120-0002 predecessor (user-supplied output).
-- [ ] Re-run Linux native build after assembly source cleanup and verify all four device hashes.
+- [x] Re-run Linux native build after assembly source cleanup; all four device SHA-1 hashes match originals (user-supplied terminal output, v20261120-0006).
 - [ ] Execute Windows build and record device verification output.
 - [x] Confirm baseline 4 KB image and four device SHA-1 values from supplied Linux build output.
-- [ ] Execute `mame checkmat -rompath roms -window -skip_gameinfo` and capture runtime result.
+- [x] Launch `mame checkmat -rompath roms -window -skip_gameinfo`: process ran at 100% average speed for approximately six seconds and reported missing undumped optional `checkmat.d` (user-supplied output).
+- [ ] Record an in-game visual/input gameplay check, separate from successful MAME process launch.
 - [x] Replace all remaining generic `FLOW_xxxx` and `SUBROUTINE_xxxx` symbols with role-oriented labels.
 - [x] Classify DB regions into font glyphs, drawing records, message data, pointer tables and padding; decode identified executable DB sequences.
 - [x] Name each high-bit-terminated English display message and express native address tables as `DW` words, including player-number and round-result text pointers.
@@ -28,7 +29,7 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 
 ## Independent source-layout audit
 
-The v20261120-0004 source contains exactly 4,096 addressable bytes by static instruction-width and directive counting. All 55 unchanged labels retained their addresses. Font data begins at $0197; game graphic records at $04AB; native code at $0D4A; the language intro vectors at $0E3C; and zero-filled tail at $0FF2. This independent layout audit is distinct from an actual zmac build and SHA-1 comparison.
+The v20261120-0004 source contains exactly 4,096 addressable bytes by static instruction-width and directive counting. All 55 unchanged labels retained their addresses. Font data begins at $0197; game graphic records at $04AB; native code at $0D4A; the language intro vectors at $0E3C; and zero-filled tail at $0FF2. The final v20261120-0006 source subsequently assembled with bundled zmac v1.3 and passed all four original device SHA-1 comparisons in the user's Linux build.
 
 ## PR gate
 

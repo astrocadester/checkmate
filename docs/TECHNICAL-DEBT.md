@@ -4,12 +4,12 @@ Native source and original ROM devices remain authoritative. Native zmac v1.3 is
 
 | ID | Status | Work / evidence required |
 | --- | --- | --- |
-| ENG-001 | Implemented, runtime test pending | Native `build.sh` / `build.bat` use bundled zmac v1.3; zero Python execution in build scripts. Confirm on Linux and Windows. |
-| ENG-002 | Baseline PASS; edited source pending | User-supplied Linux build confirms four matching SHA-1 devices before v20261120-0003 ASM formatting and data decoding. Static source-width audit covers all 4,096 bytes with 55 unchanged labels unmoved. Re-run native zmac build after cleanup. |
+| ENG-001 | Linux PASS; Windows pending | User executed the final-source `build.sh` with bundled zmac v1.3. `build.bat` remains untested on Windows. |
+| ENG-002 | PASS | Final-source v20261120-0006 Linux zmac build generated all four 1 KB ROMs with expected SHA-1 values and packaged `roms/checkmat.zip` (user-supplied console transcript). |
 | ENG-003 | Audit | No hardware adapters introduced. Trace board RAM and mirrored I/O ranges against diagrams. |
-| ENG-004 | Verification pending | Record zmac build, binary SHA-1, MAME execution and hardware execution as distinct results. |
+| ENG-004 | Build PASS; MAME launched | SHA-1 checks PASS. MAME ran for approximately six seconds at 100% average speed; undumped `checkmat.d` warning. Visual/gameplay, Windows and physical hardware evidence remain open. |
 | RE-001 | Source naming complete; semantic review pending | All generic FLOW and SUBROUTINE labels replaced. Verify descriptive roles while tracing callers. |
-| RE-002 | Structured; build verification pending | Font and graphics bytes organized as labeled inline bitmaps; individual high-bit game messages, native pointer tables, animation records and player RAM records labeled; native opcode bytes at $03F3, $07FE, $0AED, $0BFE, $0D4A and $0D6E decoded. Confirm 4 KB binary. |
+| RE-002 | Byte-exact build PASS | Font and graphics bytes organized as labeled inline bitmaps; individual high-bit game messages, native pointer tables, animation records and player RAM records labeled; native opcode bytes at $03F3, $07FE, $0AED, $0BFE, $0D4A and $0D6E decoded. Final ROM banks match reference SHA-1 values. |
 | RE-003 | In progress | Complete optional language-ROM entry and runtime service study; original `checkmat.d` not supplied. |
 | RE-004 | Pending | Match game-specific memory-map mirrors and port semantics to original board diagrams. |
 

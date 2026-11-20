@@ -1,6 +1,6 @@
 # Checkmate
 
-Checkmate was developed by Dave Nutting Associates (DNA) and released by Midway in 1977. Jay (Jamie) Fenton programmed the arcade game; Dave Nutting is also credited with design and programming. It runs on Midway Intel 8080 arcade hardware. This project maintains the native Intel 8080 disassembly, original program ROMs, graphics and sound data, hardware documentation, and research into DNA's early game engines.
+Checkmate was developed by Dave Nutting Associates (DNA) and released by Midway in 1977. Jay Fenton programmed the arcade game; Dave Nutting is also credited with design and programming. 
 
 ![Checkmate cabinet marquee](images/checkmate-24967-marquee.jpg)
 
@@ -16,28 +16,28 @@ Checkmate runs native Intel 8080 game routines with reusable RST services for ti
 ## Project layout
 
 `src/checkmate.asm`  
-Annotated native Intel 8080 disassembly, original game data and graphics.
+8080 disassembly
 
 `tools/zmac`, `tools/zmac.exe`  
-Bundled zmac v1.3 assemblers for Linux and Windows.
+zmac v1.3 assemblers for Linux and Windows.
 
 `build/`  
-Untracked assembled image, listing and split 1 KB ROM devices.
+assembled image, listing and split 1 KB ROM devices.
 
 `roms/original/checkmat.zip`  
-Original reference ROM set. Never modified by the build.
+MAME ROM set
 
 `roms/checkmat.zip`  
-Untracked MAME-compatible ROM set produced by the native build.
+ROM set produced by the build.
 
 `build.sh`, `build.bat`  
-Native assembly, ROM splitting, SHA-1 comparison and packaging.
+build scripts.
 
 `docs/`  
-Technical notes, memory map, ROM research and original service documentation.
+Technical notes, game documentation.
 
 `images/`  
-Game images and memory map.
+images and memory map.
 
 ## Build
 
@@ -53,7 +53,7 @@ Windows:
 build.bat
 ```
 
-Both scripts assemble `src/checkmate.asm` directly using zmac v1.3, split the 4 KB image into four 1 KB devices, compare each device's SHA-1 with the original and package `roms/checkmat.zip`. Native build artifacts remain in untracked `build/`. No Python code participates in the build.
+Both scripts assemble `src/checkmate.asm` using zmac v1.3, split the 4 KB image into four 1 KB devices, compare each device's SHA-1 with the original and package `roms/checkmat.zip`.
 
 MAME:
 
@@ -91,7 +91,7 @@ The opening ROM bytes contain reset and interrupt vectors. Working RAM, input/ou
 
 Hardware ranges are documented alongside the board research in [memory-map details](docs/memory-map.md).
 
-## Native program architecture
+## Architecture
 
 The reset entry is at `$0000`; native interrupt routines begin at `$0008` and `$0010`. Three reusable native services are invoked with Intel 8080 RST instructions:
 
@@ -124,27 +124,26 @@ The shared selector at `$0DE8` reads language bits 5–6 of input port `$02` and
 | Selects a native code address or message-table base | Decodes the command and finds its native handler |
 | Jumps to the routine or returns a data pointer | Executes the handler and advances through the script |
 
-A `DW` assembly *word* is a 16-bit stored value, commonly an address. An interpreted command *word* is an encoded instruction in a game script, whose execution is driven by the interpreter. Both may involve native routine address tables; only the interpreter fetches and dispatches a continuing script stream.
+A `DW` assembly *word* is a 16-bit stored value, commonly an address. 
+
+An interpreted command *word* is an encoded instruction in a game script, whose execution is driven by the interpreter. 
+
+Both may involve native routine address tables; only the interpreter fetches and dispatches a continuing script stream.
 
 ## Graphics and text
 
-The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. An additional set of game drawing shapes begins at `$04AB`. English player and game messages begin with `GAME_TEXT_PLAYER` at `$0E54` and have individual names. Printable characters are shown as assembler string literals; `$40` represents an encoded space and the final letter has its high bit set. Player-number text pointers at `$0F01`, round-result text pointers at `$0F18`, graphics pointers and character records, animation selectors, and player work-RAM addresses are defined as separate typed records.
+The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. 
+
+An additional set of game drawing shapes begins at `$04AB`. 
+
+English player and game messages begin with `GAME_TEXT_PLAYER` at `$0E54`.
 
 ## Sound
 
-Native interrupt and game services coordinate counters and hardware output ports. The original [logic and sound documentation](docs/Checkmate_Logic_and_Sound_(0615-00900_Ver_A_Dec_8_1977).pdf) is retained for further signal-level analysis.
+Native interrupt and game services coordinate counters and hardware output ports. The original [logic and sound documentation](docs/Checkmate_Logic_and_Sound_(0615-00900_Ver_A_Dec_8_1977).pdf).
 
-## Development credits
-
-Jamie Fenton (credited at the time as Jay Fenton) describes programming Checkmate at DNA. Arcade History also credits Dave Nutting for design and programming. These credits refer to the Intel 8080 arcade game documented here.
 
 ## References
 
-- [Jamie Fenton — biography and gameography](https://www.fentonia.com/bio/)
-- [Checkmate game credits — Arcade History](https://www.arcade-history.com/game/444/checkmate)
-- [Jamie Fenton interview on Checkmate and early DNA games](https://allincolorforaquarter.blogspot.com/2014/07/the-pre-history-of-night-driver-part-5.html)
-
-- [Checkmate native services and language dispatch](docs/checkmate-hard-re-20261031.md)
-- [Framework comparison](docs/framework-lineage.md)
 - [Checkmate wiring diagram](docs/Checkmate_Wiring_Diagram_(1-1-1977).pdf)
 - [MAME Midway Intel 8080 driver](https://github.com/mamedev/mame/blob/master/src/mame/midway/8080bw.cpp)

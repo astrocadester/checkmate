@@ -1,0 +1,7 @@
+# Native build outputs; the original ROM reference is tracked.
+build/
+zout/
+src/zout/
+roms/build/
+roms/checkmat.zip
+*.lst

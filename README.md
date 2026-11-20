@@ -1,58 +1,124 @@
-# Checkmate — 8080 disassembly and early DNA framework comparison
+# Checkmate
 
-Byte-exact Intel 8080 reverse engineering of Midway **Checkmate**, using its original ROMs as the authority and comparing native program organization against DNA's pre-TERSE command interpreters.
+Checkmate was developed by Dave Nutting Associates (DNA) and released by Midway in 1977. It runs on Midway Intel 8080 arcade hardware. This project maintains the native Intel 8080 disassembly, original program ROMs, graphics and sound data, hardware documentation, and research into DNA's early game engines.
 
-## Current hard RE: native services and optional language ROM
+![Checkmate cabinet marquee](images/checkmate-24967-marquee.jpg)
 
-**Research revision v20261031-0002:** [Native RST service and language-dispatch analysis](docs/checkmate-hard-re-20261031.md).
+Checkmate uses native 8080 game routines and shared RST services. Its language selector uses indexed 16-bit native entry points, including entries in the optional language ROM. The documented resident ROM does not use the indexed game-bytecode dispatch loop identified in DNA's Boot Hill and baseball games.
 
-The initial flow recovery missed two `JP (HL)` targets: `$0628–$0646` (31 bytes) and `$089F–$0994` (246 bytes). Both are now native 8080 instructions (124 additional instructions, 277 bytes). Two four-entry native dispatch tables `$0E3C/$0E44` are selected by language-switch bits 5–6 on input port `$02`. Their non-English targets `$1000–$100F` are within the **undumped fifth ROM `checkmat.d`** identified by MAME, not an unknown bytecode word table. See [MAME language ROM report](https://mametesters.org/view.php?id=1050).
+| | |
+| --- | --- |
+| [Native execution](#native-program-architecture) | Reset, interrupts, shared services and two language-selected native entry paths. |
+| [Graphics and text](#graphics-and-text) | ROM font, tile data and language-specific display messages. |
+| [Sound](#sound) | Native sound and timing routines. |
+| [RAM and I/O](#ram-and-io) | Input sampling, countdowns, player state and display memory. |
 
-Checkmate also exposes three compact native services: `RST $18` timer wait, `RST $20` wrap player index and `RST $28` indexed word pointer lookup. These are native routines, not a proven interpreted command vocabulary. Checkmate's original 4 KB differs from the shared Boot Hill / Sea Wolf / baseball command dispatcher. Jamie Fenton's [first-person interview](https://www.artic.edu/pdf/static/download-collection.publications.digital-publications-sections.show-16.pdf) identifies Checkmate among her early DNA games.
+## Project layout
 
-A source-comment byte audit against the original checked-in reconstruction shows **0 differing bytes across 4,096**, with no duplicate/missing ROM bytes or unresolved symbolic jump labels. **A new zmac build/roundtrip has not been run**.
+`src/checkmate.asm`  
+Annotated native Intel 8080 disassembly, original game data and graphics.
 
-## Verified reconstruction
+`tools/zmac`, `tools/zmac.exe`  
+Bundled zmac v1.3 assemblers for Linux and Windows.
 
-Four dumped **1 KB** original ROM devices form a contiguous **4 KB** program image at CPU `$0000–$0FFF`. The separate `checkmat.d` language ROM at `$1000–$13FF` remains undumped. Baseline control-flow traversal recovered **1,452 native Intel 8080 instructions** across **2,601 program bytes**. This RE pass additionally recovered **124 native instructions and 277 executable bytes** behind indirect language jumps. Genuine non-code regions remain byte-faithful `DB` data; remaining unclassified or mixed regions are conservatively documented.
+`build/`  
+Untracked assembled image, listing and split 1 KB ROM devices.
 
-The complete reconstructed code is in [src/checkmate.asm](src/checkmate.asm), with assembler listing `src/zout/checkmate.lst`, bank images and emulator ROM ZIP under `roms/build/`.
+`roms/original/checkmat.zip`  
+Original reference ROM set. Never modified by the build.
 
-The original device bytes from the supplied Checkmate ROM set are preserved through the validated compressed fixture [tools/checkmat-original-rom.zlib.b64](tools/checkmat-original-rom.zlib.b64) and materialized into `roms/original/checkmat.zip`. The 4 KB concatenated ROM SHA-256 is `8e5841bedb5c866b8c6cf7c1f6b2c45d441f86eee5863c191df36bbfdac76263`.
+`roms/checkmat.zip`  
+Untracked MAME-compatible ROM set produced by the native build.
 
-## Framework finding
+`build.sh`, `build.bat`  
+Native assembly, ROM splitting, SHA-1 comparison and packaging.
 
-The exact 1976–78 DNA interpreter dispatch signature — shift opcode, index a fixed 16-bit native-handler table, then indirect jump — is **not present** in the recovered Checkmate ROM.
+`docs/`  
+Technical notes, memory map, ROM research and original service documentation.
 
-That is a *signature-negative result*, not a claim that Checkmate lacks higher-level scripting. Its direct native 8080 routines and game-state tables remain an important control case in the framework ancestry analysis. Boot Hill, by contrast, contains a verified 16-command indexed VM; Tornado Baseball contains 26 commands; Double Play and Extra Inning contain 28.
+`images/`  
+Game images and memory map.
 
-See the [new hard-RE findings](docs/checkmate-hard-re-20261031.md), [framework comparison](docs/framework-lineage.md), and [machine-readable native recovery](docs/recovery.json).
+`tools/*.py`  
+Historical reverse-engineering investigation utilities only; not invoked by the build.
 
-## Memory map
+## Build
 
-| CPU range | Original device / region |
-|---|---|
-| `$0000–$03FF` | `checkmat.h` |
-| `$0400–$07FF` | `checkmat.g` |
-| `$0800–$0BFF` | `checkmat.f` |
-| `$0C00–$0FFF` | `checkmat.e` |
-| `$1000–$13FF` | `checkmat.d` — optional language ROM, undumped |
-| `$2000–$23FF` | Candidate work RAM; board decoding not yet verified |
-| `$2400–$3FFF` | Candidate display RAM; board decoding not yet verified |
+Linux:
 
-See [dark-mode memory-map SVG](docs/memory-map.svg) and [memory-map details](docs/memory-map.md). The repository also retains original logic/sound and wiring schematic PDFs for follow-on board mapping.
-
-## Rebuild and verify
-
-```bash
-chmod +x tools/zmac
-bash build.sh
+```sh
+./build.sh
 ```
 
-The build materializes the original devices, emits annotated native assembly, and invokes bundled **zmac v1.3** to produce `roms/build/checkmate.bin`. Verification compares every generated byte against the original four banks and exports `roms/build/checkmate.zip`, `checkmat.h/g/f/e`, and the `src/zout/checkmate.lst` listing.
+Windows:
 
-CI: [.github/workflows/native-re.yml](.github/workflows/native-re.yml).
+```bat
+build.bat
+```
 
-## Continued research
+Both scripts assemble `src/checkmate.asm` directly using zmac v1.3, split the 4 KB image into four 1 KB devices, compare each device's SHA-1 with the original and package `roms/checkmat.zip`. Native build artifacts remain in untracked `build/`. No Python code participates in the build.
 
-Trace native event scheduling, shared RAM structures, output port operations and any indirect table-driven control, then compare confirmed behavior to Boot Hill's indexed VM and later DNA baseball interpreters. The original opcode vocabulary must not be invented from apparent gameplay similarity.
+MAME:
+
+```sh
+mame checkmat -rompath roms -window -skip_gameinfo
+```
+
+## ROM organization
+
+Four 1 KB devices hold the 4 KB resident program; the additional language ROM `checkmat.d` occupies the optional `$1000–$13FF` region and is absent from the preserved four-device reference set.
+
+| ROM | CPU address |
+| --- | --- |
+| `checkmat.h` | `$0000–$03FF` |
+| `checkmat.g` | `$0400–$07FF` |
+| `checkmat.f` | `$0800–$0BFF` |
+| `checkmat.e` | `$0C00–$0FFF` |
+| `checkmat.d` (optional language device) | `$1000–$13FF` |
+
+![Checkmate Intel 8080 memory map](images/checkmate-memory-map.svg)
+
+The opening ROM bytes contain reset and interrupt vectors. Working RAM, input/output services and bitmap video memory are addressed by the native 8080 routines.
+
+## RAM and I/O
+
+| Address | Use |
+| --- | --- |
+| `$2000–$2001` | Coin-edge sample and detected edge state |
+| `$2003` | Countdown sampled by interrupt service |
+| `$2007` | Player count |
+| `$2011` | Current player index for indexed lookup |
+| `$21BE` | Countdown used by `RST $18` wait service |
+| `$2000–$23FF` | Working RAM region |
+| `$2400–$3FFF` | Bitmap display RAM region |
+
+Hardware ranges are documented alongside the board research in [memory-map details](docs/memory-map.md).
+
+## Native program architecture
+
+The reset entry is at `$0000`; native interrupt routines begin at `$0008` and `$0010`. Three reusable native services are invoked with Intel 8080 RST instructions:
+
+| Service | Target | Function |
+| --- | --- | --- |
+| `RST $18` | `$0D7D` | Wait on game countdown |
+| `RST $20` | `$0CA8` | Advance or wrap player index |
+| `RST $28` | `$0C99` | Select indexed 16-bit pointer |
+
+The common pointer helper at `$0C9C` reads a little-endian native address from a table. Language selection at `$0DE8` selects between native paths beginning at `$0628` and `$089F` or addresses in the optional language device. This is a native service and language-selection architecture, rather than the game-command interpreter found in other DNA titles.
+
+See [Checkmate native services and language dispatch](docs/checkmate-hard-re-20261031.md) for the full trace.
+
+## Graphics and text
+
+The ROM contains bitmap glyphs and tiles beginning near `$018A`, with game and player message records elsewhere in the program. The English-language display paths use the same native drawing routines and pointer-based message selection.
+
+## Sound
+
+Native interrupt and game services coordinate counters and hardware output ports. The original [logic and sound documentation](docs/Checkmate_Logic_and_Sound_(0615-00900_Ver_A_Dec_8_1977).pdf) is retained for further signal-level analysis.
+
+## References
+
+- [Checkmate native services and language dispatch](docs/checkmate-hard-re-20261031.md)
+- [Framework comparison](docs/framework-lineage.md)
+- [Checkmate wiring diagram](docs/Checkmate_Wiring_Diagram_(1-1-1977).pdf)
+- [MAME Midway Intel 8080 driver](https://github.com/mamedev/mame/blob/master/src/mame/midway/8080bw.cpp)

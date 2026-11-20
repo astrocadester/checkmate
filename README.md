@@ -107,7 +107,7 @@ See [Checkmate native services and language dispatch](docs/checkmate-hard-re-202
 
 ## Graphics and text
 
-The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. An additional set of game drawing shapes begins at `$04AB`. English player and game messages are collected under `ENGLISH_DISPLAY_MESSAGES` at `$0E54`; the remaining ROM tables are labeled by their actual use.
+The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. An additional set of game drawing shapes begins at `$04AB`. English player and game messages begin with `GAME_TEXT_PLAYER` at `$0E54` and have individual names. Player-number text pointers at `$0F01`, round-result text pointers at `$0F18`, graphics pointers and character records, animation selectors, and player work-RAM addresses are defined as separate typed records.
 
 ## Sound
 

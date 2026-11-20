@@ -9,7 +9,7 @@ Native source and original ROM devices remain authoritative. Native zmac v1.3 is
 | ENG-003 | Audit | No hardware adapters introduced. Trace board RAM and mirrored I/O ranges against diagrams. |
 | ENG-004 | Verification pending | Record zmac build, binary SHA-1, MAME execution and hardware execution as distinct results. |
 | RE-001 | Source naming complete; semantic review pending | All generic FLOW and SUBROUTINE labels replaced. Verify descriptive roles while tracing callers. |
-| RE-002 | Structured; build verification pending | Font and graphics bytes organized as labeled inline bitmaps; tail tables split by use; native opcode bytes at $03F3, $07FE, $0AED, $0BFE, $0D4A and $0D6E decoded. Confirm 4 KB binary. |
+| RE-002 | Structured; build verification pending | Font and graphics bytes organized as labeled inline bitmaps; individual high-bit game messages, native pointer tables, animation records and player RAM records labeled; native opcode bytes at $03F3, $07FE, $0AED, $0BFE, $0D4A and $0D6E decoded. Confirm 4 KB binary. |
 | RE-003 | In progress | Complete optional language-ROM entry and runtime service study; original `checkmat.d` not supplied. |
 | RE-004 | Pending | Match game-specific memory-map mirrors and port semantics to original board diagrams. |
 

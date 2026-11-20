@@ -3101,90 +3101,250 @@ ATTRACT_PATTERN_PULSE_DELAY:
         OUT ($01),A
         RET
 
-; Game timing and option bytes.
+; Game mode and timing configuration.
 GAME_TIMING_CONFIGURATION:
         DB $01,$01,$01,$01,$02,$01,$02,$01
 
-; Indexed display and game address words.
+; Native indexed 16-bit display and message addresses.
 GAME_ADDRESS_LOOKUP_WORDS:
-        DB $00,$28,$40,$2A,$00,$2E,$40,$34,$61,$3E,$6C,$0E
-        DB $7A,$0E,$8A,$0E,$D5,$0E,$5E,$0E,$62,$0E,$62,$0E
-        DB $67,$0E,$F4,$0E,$1B,$00,$FA,$0E,$23,$00
+        DW $2800
+        DW $2A40
+        DW $2E00
+        DW $3440
+        DW $3E61
+        DW $0E6C
+        DW $0E7A
+        DW $0E8A
+        DW $0ED5
+        DW $0E5E
+        DW $0E62
+        DW $0E62
+        DW $0E67
+        DW $0EF4
+        DW $001B
+        DW $0EFA
+        DW $0023
 
-; Four language-selected native intro entry points.
+; Four language-selection native intro entries.
 LANGUAGE_INTRO_NATIVE_VECTORS:
         DW $0628
         DW $1000
         DW $1003
         DW $1006
 
-; Four language-selected native round entry points.
+; Four language-selection native round-result entries.
 LANGUAGE_ROUND_NATIVE_VECTORS:
         DW $089F
         DW $1009
         DW $100C
         DW $100F
 
-; Language-specific message address words.
+; Four language-specific message address words.
 LANGUAGE_MESSAGE_OFFSETS:
-        DB $24,$0E,$20,$10,$40,$10,$60,$10
+        DW $0E24
+        DW $1020
+        DW $1040
+        DW $1060
 
-; English player, score and game-over messages, high-bit termination.
-ENGLISH_DISPLAY_MESSAGES:
-        DB $50,$4C,$41,$59,$45,$D2,$57,$49,$4E,$D3,$08,$54
-        DB $49,$C5,$08,$47,$41,$4D,$C5,$08,$4F,$56,$45,$D2
+; High-bit-terminated text "PLAYER".
+GAME_TEXT_PLAYER:
+        DB $50,$4C,$41,$59,$45,$D2
+
+; High-bit-terminated text "WINS".
+GAME_TEXT_WINS:
+        DB $57,$49,$4E,$D3
+
+; High-bit-terminated text "TIE" with display control.
+GAME_TEXT_TIE:
+        DB $08,$54,$49,$C5
+
+; High-bit-terminated text "GAME" with display control.
+GAME_TEXT_GAME:
+        DB $08,$47,$41,$4D,$C5
+
+; High-bit-terminated text "OVER" with display control.
+GAME_TEXT_OVER:
+        DB $08,$4F,$56,$45,$D2
+
+; High-bit-terminated "TO START GAME" instruction.
+GAME_TEXT_START_GAME:
         DB $07,$54,$4F,$40,$53,$54,$41,$52,$54,$40,$47,$41
-        DB $4D,$C5,$08,$59,$4F,$55,$40,$48,$41,$56,$45,$40
-        DB $43,$52,$45,$44,$49,$D4,$03,$50,$52,$45,$53,$53
-        DB $40,$31,$40,$4F,$52,$40,$32,$40,$50,$4C,$41,$59
-        DB $45,$52,$40,$42,$55,$54,$54,$4F,$4E,$23,$25,$49
-        DB $4E,$53,$45,$52,$54,$40,$41,$44,$44,$49,$54,$49
-        DB $4F,$4E,$41,$4C,$40,$43,$4F,$49,$4E,$25,$25,$46
-        DB $4F,$52,$40,$33,$40,$4F,$52,$40,$34,$40,$50,$4C
-        DB $41,$59,$45,$52,$40,$47,$41,$4D,$C5,$40,$50,$52
-        DB $45,$53,$53,$40,$31,$40,$32,$40,$33,$40,$4F,$52
-        DB $40,$34,$40,$50,$4C,$41,$59,$45,$52,$40,$42,$55
-        DB $54,$54,$4F,$CE,$06,$43,$48,$45,$43,$CB,$04,$49
-        DB $4E,$53,$45,$52,$D4,$09,$0F,$0C,$0F,$0F,$0F,$14
-        DB $0F,$4F,$4E,$C5,$54,$57,$CF,$54,$48,$52,$45,$C5
-        DB $46,$4F,$55,$D2,$20,$0F,$2E,$0F,$3D,$0F,$47,$0F
+        DB $4D,$C5
+
+; High-bit-terminated "YOU HAVE CREDIT" instruction.
+GAME_TEXT_HAVE_CREDIT:
+        DB $08,$59,$4F,$55,$40,$48,$41,$56,$45,$40,$43,$52
+        DB $45,$44,$49,$D4
+
+; Player-count, start-button and additional-credit instructions.
+GAME_TEXT_START_BUTTONS:
+        DB $03,$50,$52,$45,$53,$53,$40,$31,$40,$4F,$52,$40
+        DB $32,$40,$50,$4C,$41,$59,$45,$52,$40,$42,$55,$54
+        DB $54,$4F,$4E,$23,$25,$49,$4E,$53,$45,$52,$54,$40
+        DB $41,$44,$44,$49,$54,$49,$4F,$4E,$41,$4C,$40,$43
+        DB $4F,$49,$4E,$25,$25,$46,$4F,$52,$40,$33,$40,$4F
+        DB $52,$40,$34,$40,$50,$4C,$41,$59,$45,$52,$40,$47
+        DB $41,$4D,$C5
+
+; Player one through four selection instruction.
+GAME_TEXT_CHOOSE_PLAYERS:
+        DB $40,$50,$52,$45,$53,$53,$40,$31,$40,$32,$40,$33
+        DB $40,$4F,$52,$40,$34,$40,$50,$4C,$41,$59,$45,$52
+        DB $40,$42,$55,$54,$54,$4F,$CE
+
+; High-bit-terminated "CHECK" word.
+GAME_TEXT_CHECK:
+        DB $06,$43,$48,$45,$43,$CB
+
+; High-bit-terminated "INSERT" word.
+GAME_TEXT_INSERT:
+        DB $04,$49,$4E,$53,$45,$52,$D4
+
+; Four pointers to spelled-out player numbers.
+PLAYER_NUMBER_TEXT_POINTERS:
+        DW $0F09
+        DW $0F0C
+        DW $0F0F
+        DW $0F14
+
+; High-bit-terminated "ONE" word.
+GAME_TEXT_ONE:
+        DB $4F,$4E,$C5
+
+; High-bit-terminated "TWO" word.
+GAME_TEXT_TWO:
+        DB $54,$57,$CF
+
+; High-bit-terminated "THREE" word.
+GAME_TEXT_THREE:
+        DB $54,$48,$52,$45,$C5
+
+; High-bit-terminated "FOUR" word.
+GAME_TEXT_FOUR:
+        DB $46,$4F,$55,$D2
+
+; Four pointers to round-result messages.
+ROUND_RESULT_TEXT_POINTERS:
+        DW $0F20
+        DW $0F2E
+        DW $0F3D
+        DW $0F47
+
+; High-bit-terminated "BITES THE DUST" message.
+GAME_TEXT_BITES_DUST:
         DB $42,$49,$54,$45,$53,$40,$54,$48,$45,$40,$44,$55
-        DB $53,$D4,$4D,$45,$45,$54,$53,$40,$48,$49,$53,$40
-        DB $4D,$41,$4B,$45,$D2,$43,$48,$45,$43,$4B,$53,$40
-        DB $4F,$55,$D4,$50,$52,$4F,$4E,$4F,$55,$4E,$43,$45
-        DB $44,$40,$44,$45,$41,$C4
+        DB $53,$D4
 
-; Pointers to font graphics and drawing records.
+; High-bit-terminated "MEETS HIS MAKER" message.
+GAME_TEXT_MEETS_MAKER:
+        DB $4D,$45,$45,$54,$53,$40,$48,$49,$53,$40,$4D,$41
+        DB $4B,$45,$D2
+
+; High-bit-terminated "CHECKS OUT" message.
+GAME_TEXT_CHECKS_OUT:
+        DB $43,$48,$45,$43,$4B,$53,$40,$4F,$55,$D4
+
+; High-bit-terminated "PRONOUNCED DEAD" message.
+GAME_TEXT_PRONOUNCED_DEAD:
+        DB $50,$52,$4F,$4E,$4F,$55,$4E,$43,$45,$44,$40,$44
+        DB $45,$41,$C4
+
+; Twelve 16-bit pointers to ROM glyphs and graphic shapes.
 FONT_AND_DRAWING_POINTERS:
-        DB $46,$03,$50,$03,$5A,$03,$64,$03,$FC,$01,$06,$02
-        DB $10,$02,$1A,$02,$B4,$04,$BC,$04,$C4,$04,$CC,$04
+        DW $0346
+        DW $0350
+        DW $035A
+        DW $0364
+        DW $01FC
+        DW $0206
+        DW $0210
+        DW $021A
+        DW $04B4
+        DW $04BC
+        DW $04C4
+        DW $04CC
 
-; Graphics selector records and small drawing tables.
-GRAPHICS_SELECTOR_RECORDS:
-        DB $76,$0F,$79,$0F,$7C,$0F,$7F,$0F,$3A,$3A,$DB,$3B
-        DB $3B,$DC,$3C,$3C,$DD,$3D,$3D,$DE,$8A,$0F,$90,$0F
-        DB $96,$0F,$9C,$0F,$5F,$60,$61,$3E,$62,$E3,$5F,$60
-        DB $61,$3E,$64,$E5,$5F,$60,$61,$66,$67,$E8,$5F,$60
-        DB $61,$3E
+; Four 16-bit addresses of character records.
+CHARACTER_RECORD_POINTERS:
+        DW $0F76
+        DW $0F79
+        DW $0F7C
+        DW $0F7F
 
-; Player and board record address table.
-PLAYER_RECORD_ADDRESS_TABLE:
-        DB $69,$EA,$C0,$21,$C8,$21,$D0,$21,$D8,$21,$1E,$17
-        DB $01,$17,$15,$17,$0B,$17,$00,$FF,$00,$01,$FF,$00
-        DB $01,$00,$C8,$0F,$C8,$0F,$CC,$0F,$D2,$0F,$1B,$0B
-        DB $04,$0B,$0E,$04
+; Four three-byte encoded character records.
+CHARACTER_CODE_RECORDS:
+        DB $3A,$3A,$DB
+        DB $3B,$3B,$DC
+        DB $3C,$3C,$DD
+        DB $3D,$3D,$DE
 
-; Video RAM addresses and player position records.
-DISPLAY_POSITION_ADDRESS_TABLE:
-        DB $0F,$13,$00,$24,$18,$24,$00,$24,$07,$24,$18,$24
-        DB $00,$24,$07,$24,$11,$24,$18,$24,$14,$09,$14,$19
-        DB $14,$29,$14,$39,$00,$F0
+; Four 16-bit pointers to six-byte animation records.
+ANIMATION_RECORD_POINTERS:
+        DW $0F8A
+        DW $0F90
+        DW $0F96
+        DW $0F9C
 
-; Final configuration and data words.
-GAME_END_CONFIGURATION:
-        DB $00,$00,$14,$04,$05,$A9,$05,$19,$05,$79,$00,$32
+; Four six-byte encoded animation and selector records.
+ANIMATION_SELECTOR_RECORDS:
+        DB $5F,$60,$61,$3E,$62,$E3
+        DB $5F,$60,$61,$3E,$64,$E5
+        DB $5F,$60,$61,$66,$67,$E8
+        DB $5F,$60,$61,$3E,$69,$EA
 
-; Unused zero-filled bytes to end of final 1 KB device.
+; Four 16-bit player record pointers into RAM $21C0 through $21D8.
+PLAYER_WORK_RAM_POINTERS:
+        DW $21C0
+        DW $21C8
+        DW $21D0
+        DW $21D8
+
+; Four two-byte game data values.
+PLAYER_GAME_VALUE_WORDS:
+        DB $1E,$17,$01,$17,$15,$17,$0B,$17
+
+; Six-byte player control and termination record.
+PLAYER_CONTROL_BYTES:
+        DB $00,$FF,$00,$01,$FF,$00
+
+; One-based index table, with a leading two-byte bias value.
+PLAYER_TABLE_INDEX_BASE:
+        DB $01,$00
+
+; Four player-dependent addresses into the following tables.
+PLAYER_TABLE_POINTERS:
+        DW $0FC8
+        DW $0FC8
+        DW $0FCC
+        DW $0FD2
+
+; Eight-byte player record configuration.
+PLAYER_RECORD_CONFIGURATION:
+        DB $1B,$0B,$04,$0B,$0E,$04,$0F,$13
+
+; Video RAM position addresses for the player displays.
+PLAYER_VIDEO_ADDRESS_WORDS:
+        DW $2400
+        DW $2418
+        DW $2400
+        DW $2407
+        DW $2418
+        DW $2400
+        DW $2407
+        DW $2411
+        DW $2418
+
+; Player graphic coordinate words.
+PLAYER_GRAPHIC_POSITION_WORDS:
+        DB $14,$09,$14,$19,$14,$29,$14,$39
+
+; Final game and graphics configuration bytes.
+FINAL_GAME_CONFIGURATION:
+        DB $00,$F0,$00,$00,$14,$04,$05,$A9,$05,$19,$05,$79
+        DB $00,$32
+
+; Zero padding to end of fourth ROM device.
 ROM_TAIL_ZERO_PADDING:
         DB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
         DB $00,$00
+

@@ -19,6 +19,7 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 - [ ] Execute `mame checkmat -rompath roms -window -skip_gameinfo` and capture runtime result.
 - [x] Replace all remaining generic `FLOW_xxxx` and `SUBROUTINE_xxxx` symbols with role-oriented labels.
 - [x] Classify DB regions into font glyphs, drawing records, message data, pointer tables and padding; decode identified executable DB sequences.
+- [x] Name each high-bit-terminated English display message and express native address tables as `DW` words, including player-number and round-result text pointers.
 - [x] Format blank lines before header comments and place comments directly above sections.
 - [x] Replace overflowing memory-map design with Extra Inning chip styling; rename unmapped areas.
 - [x] Remove duplicate original-folder PDFs and obsolete Python RE generators; preserve original ZIP.

@@ -9,7 +9,7 @@ Native source and original ROM devices remain authoritative. Native zmac v1.3 is
 | ENG-003 | Audit | No hardware adapters introduced. Trace board RAM and mirrored I/O ranges against diagrams. |
 | ENG-004 | Build PASS; MAME launched | SHA-1 checks PASS. MAME ran for approximately six seconds at 100% average speed; undumped `checkmat.d` warning. Visual/gameplay, Windows and physical hardware evidence remain open. |
 | RE-001 | Source naming complete; semantic review pending | All generic FLOW and SUBROUTINE labels replaced. Verify descriptive roles while tracing callers. |
-| RE-002 | Byte-exact build PASS | Font and graphics bytes organized as labeled inline bitmaps; individual high-bit game messages, native pointer tables, animation records and player RAM records labeled; native opcode bytes at $03F3, $07FE, $0AED, $0BFE, $0D4A and $0D6E decoded. Final ROM banks match reference SHA-1 values. |
+| RE-002 | Source text audit PASS; new build pending | Previous complete ASM build matched all four original SHA-1 values. Nineteen message records now use ASCII string fragments for 242 byte-identical source data bytes. Re-run zmac SHA-1 verification on this string-formatting revision. |
 | RE-003 | In progress | Complete optional language-ROM entry and runtime service study; original `checkmat.d` not supplied. |
 | RE-004 | Pending | Match game-specific memory-map mirrors and port semantics to original board diagrams. |
 

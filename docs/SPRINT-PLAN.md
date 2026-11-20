@@ -2,7 +2,7 @@
 
 Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../AGENTS.md). Native Intel 8080 source and original ROM bytes own the game semantics. The native build uses zmac v1.3 without source regeneration.
 
-## Current cleanup — v20261120-0003
+## Current cleanup — v20261120-0008
 
 - [x] Preserve reference `roms/original/checkmat.zip` unchanged.
 - [x] Replace Python-dependent build with direct native assembler invocation on Linux.
@@ -24,6 +24,10 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 - [x] Format blank lines before header comments and place comments directly above sections.
 - [x] Replace overflowing memory-map design with Extra Inning chip styling; rename unmapped areas.
 - [x] Remove duplicate original-folder PDFs and obsolete Python RE generators; preserve original ZIP.
+- [x] Center labels and captions in the SVG memory map; remove excess qualification text and main-ROM subtitle.
+- [x] Rewrite the README and language-dispatch technical note as concise, affirmative descriptions of native execution.
+- [x] Render 19 named text DB records as readable assembler string fragments, preserving encoded spaces, controls and high-bit terminators; static comparison confirms all 242 original text bytes match.
+- [ ] Run final zmac SHA-1 verification after readable string-literal source changes.
 - [ ] Verify interpretation of individual game lookup records and sound routines against code and board documents.
 - [ ] Verify memory mirrors and I/O against board schematics.
 

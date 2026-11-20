@@ -1,74 +1,40 @@
-# Checkmate: Native Services, Language Dispatch, and DNA Lineage
+# Checkmate native program architecture
 
-**Revision:** v20261031-0002. Source: original Checkmate four 1 KB Intel 8080 ROM devices and `src/checkmate.asm`. Baseline SHA-256: `8e5841bedb5c866b8c6cf7c1f6b2c45d441f86eee5863c191df36bbfdac76263`.
+Checkmate (1977), developed by Dave Nutting Associates for Midway, uses native Intel 8080 routines for game control, player state, graphics and messages. Its four resident 1 KB ROM devices form a 4 KB program at `$0000–$0FFF`.
 
-## Finding: native dispatch, not a game-bytecode VM
+## Shared native services
 
-Checkmate's known 4 KB program does not contain the Boot Hill / Sea Wolf / baseball indexed-bytecode dispatcher tail `07 4F 06 00 09 7E 23 66 6F E9`. A deeper audit nevertheless found **two native indirect jump destinations** previously marked as `DB`: `$0628–$0646` and `$089F–$0994`. These add **277 executable bytes and 124 native instructions** to the recovered assembly. They are selected by the **language configuration bits**, not an interpreted instruction stream.
+Checkmate uses the 8080's single-byte `RST` calls to reach three common services:
 
-Checkmate's native framework provides compact services through three `RST` vectors and a shared indexed 16-bit pointer fetch. These are the meaningful callable “words” of its service layer, not a demonstrated language interpreter.
+| Call | Native entry | Purpose |
+| --- | --- | --- |
+| `RST $18` | `$0D7D` | Wait on a countdown while servicing game frames |
+| `RST $20` | `$0CA8` | Advance or wrap the player index |
+| `RST $28` | `$0C99` | Look up the current player's 16-bit table entry |
 
-## Recovered RST service vocabulary
+The lookup helper at `$0C9C` takes an index and table address, reads a little-endian 16-bit value, and returns that value in `HL`. The caller uses the value as a pointer or code entry address.
 
-| One-byte call | ROM vector | Native target | Role |
-|---|---|---|---|
-| `RST $18` | `$0018` | `$0D7D` | Store A into countdown RAM `$21BE`, service `$0520` until the counter becomes zero, then return; 8 uses in recovered source |
-| `RST $20` | `$0020` | `$0CA8` | Compare (HL) against player count `RAM[$2007]`; increment it or wrap to 1; 7 uses |
-| `RST $28` | `$0028` | `$0C99` | Fetch current player index `RAM[$2011]` into A, then enter `$0C9C` shared indexed word lookup; 11 uses |
+## Language selection
 
-**Shared indexed word helper, `$0C9C`:** doubles the index in A, adds it to the table base in HL, loads a little-endian pointer into HL, preserves DE, and returns. The *caller* either dereferences the selected object, renders it or jumps. There is no interpreter PC, token fetch, operand consumption, and redispatch loop in this service.
+The language setting is encoded in bits 5–6 of input port `$02`. The native selector at `$0DE8` rotates those bits into a two-bit index (`0–3`) and looks up a 16-bit routine address from a table. The calling code jumps through `HL` to execute that routine.
 
-## Language-selector ABI and exact tables
+| Language setting index | Intro routine table at `$0E3C` | Round-result table at `$0E44` |
+| --- | --- | --- |
+| 0 — English | `$0628` | `$089F` |
+| 1 | `$1000` | `$1009` |
+| 2 | `$1003` | `$100C` |
+| 3 | `$1006` | `$100F` |
 
-Both paths use selector `$0DE8`:
+The English paths reside in the main ROM. Entries `$1000–$100F` reference the additional `checkmat.d` language ROM. This ROM supported the cabinet's other language selections; its contents have not been dumped in the available MAME set.
 
-```asm
-$0DE8  IN A,($02)
-$0DEA  RLCA
-$0DEB  RLCA
-$0DEC  RLCA
-$0DED  AND $03      ; original port-$02 bits 5–6
-$0DEF  JP $0C9C     ; return selected 16-bit native address in HL
-```
+The selector chooses among already-written native routines. An interpreter executes a program stream containing encoded commands, repeatedly fetching an instruction, finding its handler and continuing to the next instruction. In Checkmate, `DW` stores native addresses and `RST` calls native services; these are not TERSE or other interpreted-language words.
 
-| Table | Native JP site | Choice 0 (resident) | Choice 1 | Choice 2 | Choice 3 |
-|---|---|---|---|---|---|
-| `$0E3C` | `$0627` | `$0628` | `$1000` | `$1003` | `$1006` |
-| `$0E44` | `$089E` | `$089F` | `$1009` | `$100C` | `$100F` |
+## Display and game data
 
-The destinations at `$1000–$100F` belong to Checkmate's **undumped fifth ROM `checkmat.d`** mapped at `$1000` with size `$0400`. The historic MAME issue describes this as a **language ROM**, with German, French and Spanish options, consistent with the DIP-switch selection. These are not unidentified dictionary vectors. Evidence: https://mametesters.org/view.php?id=1050.
+The source identifies the resident English messages beginning at `$0E54`, including player prompts, start-game instructions and round-result messages. Two pointer tables select spelled-out player numbers (`$0F01`) and round-result text (`$0F18`). Font, drawing, animation and player-state tables are labeled alongside the native routines in [the disassembly](../src/checkmate.asm).
 
-### First selected native path: `LANGUAGE0_INTRO_RENDER`, $0628–$0646 (31 bytes)
+## Build
 
-Renders the packed PLAYER text at `$0E54` and WINS text at `$0E5A` using `$0DBB` and `$044C`, draws the selected player's numeral derived from `RAM[$2007]`, then falls through into `$0647`. A 31-byte instruction sequence previously stored as raw `DB` is now native assembly.
+`./build.sh` assembles the source with bundled zmac v1.3, verifies all four original 1 KB device SHA-1 hashes and writes the MAME set to `roms/checkmat.zip`. The complete cleaned source passed all four SHA-1 checks in the user-reported Linux build on November 20, 2026. MAME launched with its known missing-`checkmat.d` warning.
 
-### Second selected path: `LANGUAGE0_ROUND_SETUP`, $089F–$0994 (246 bytes)
-
-The reconstructed English-language round/result routine:
-- `$089F–$08D3`: configures screen output, renders game messages and selects table-driven text via `RST $28`.
-- `$08D4–$08E5`: loops over null-terminated result text; calls `RST $18` to pace output.
-- `$08E6–$0925`: clears current state and updates scoring; `$0915–$0917` increments with `DAA`, so score arithmetic is BCD-oriented.
-- `$0926–$0954`: iterates state/player-position entries and calls display helpers.
-- `$0955–$098A`: loops through winner/result entries, `RST $20` player-index increment, `$0C9C` word-pointer fetch and timing.
-- `$098B–$0994`: clears display using `$0D11` and returns.
-
-The resident source includes both indirect native entry paths, with descriptive routine and loop labels. The original reverse-engineering generator was retired after the static source was preserved and the native build separated from code generation.
-
-## Interpreter comparison and chronology
-
-| Feature | Checkmate (1977) | Boot Hill / Sea Wolf / baseball |
-|---|---|---|
-| Script PC and command fetch | No corresponding interpreter path recovered | Boot Hill: RAM `$2006`, byte fetch and zero-token frame yield; later games have game-specific program pointers |
-| Tables | Two four-way **language-specific native entry tables** | Boot Hill 16 nonzero command handlers; Tornado Baseball 26; Double Play / Extra Inning 28 |
-| Indirect call | `$0C9C` word-pointer fetch, `JP (HL)` at `$0627/$089E` | Indexed bytecode handlers selected from script tokens |
-| Service ABI | `RST $18/$20/$28` with native handlers | Interpreter words with variable inline operands and native handler execution |
-
-The similarity is **reuse of compact native services, pointer vectors, and 8080 dispatch idioms**, not a proven common command set. The known byte-exact Boot Hill dispatcher tail also appears in Sea Wolf, Tornado Baseball, Double Play and Extra Inning; Checkmate instead exposes a parallel native-services architecture. Its RST call surface is a worthwhile architectural antecedent to compare with Astrocade's later BIOS conventions, without asserting identical implementation.
-
-**Provenance:** Jamie Fenton discusses her early DNA work on Checkmate and 280 ZZZAP in a first-person interview: https://www.artic.edu/pdf/static/download-collection.publications.digital-publications-sections.show-16.pdf. Checkmate therefore provides a direct 1977 Fenton/DNA case study alongside the evolution of interpreted games.
-
-## Data and build integrity
-
-Bitmap tiles and glyphs `$018A–$03E4`, high-bit-terminated text starting at `$0E54`, non-language lookup data, and padding must remain genuine data. The two identified code ranges must **not** remain `DB`. Unknown `checkmat.d` bytes must not be synthesized.
-
-User-provided Linux build output confirmed the baseline assembled four original 1 KB device SHA-1 values. The subsequent source cleanup replaces remaining generic labels, converts previously preserved native opcode bytes to assembly, annotates 8×10 bitmap data, and organizes the complete data tail by use. Re-run zmac v1.3 and compare all four banks after these edits; the source changes have not been assembled in the GitHub connector environment. MAME and Windows tests remain separate. Reverse-engineering scripts are removed from the production repository; the static native assembly is authoritative.
+For the ROM address layout, see the [memory map](../images/checkmate-memory-map.svg).

@@ -3105,36 +3105,36 @@ ATTRACT_PATTERN_PULSE_DELAY:
 GAME_TIMING_CONFIGURATION:
         DB $01,$01,$01,$01,$02,$01,$02,$01
 
-; Native indexed 16-bit display and message addresses.
-GAME_ADDRESS_LOOKUP_WORDS:
+; Screen positions and indexed message addresses (16-bit entries).
+GAME_DISPLAY_AND_TEXT_POINTERS:
         DW $2800
         DW $2A40
         DW $2E00
         DW $3440
         DW $3E61
-        DW $0E6C
-        DW $0E7A
-        DW $0E8A
-        DW $0ED5
-        DW $0E5E
-        DW $0E62
-        DW $0E62
-        DW $0E67
-        DW $0EF4
-        DW $001B
-        DW $0EFA
-        DW $0023
+        DW GAME_TEXT_START_GAME
+        DW GAME_TEXT_HAVE_CREDIT
+        DW GAME_TEXT_START_BUTTONS
+        DW GAME_TEXT_CHOOSE_PLAYERS
+        DW GAME_TEXT_TIE
+        DW GAME_TEXT_GAME
+        DW GAME_TEXT_GAME
+        DW GAME_TEXT_OVER
+        DW GAME_TEXT_CHECK
+        DW RST18_INLINE_MAT_TEXT
+        DW GAME_TEXT_INSERT
+        DW RST20_INLINE_COIN_TEXT
 
 ; Four language-selection native intro entries.
 LANGUAGE_INTRO_NATIVE_VECTORS:
-        DW $0628
+        DW LANGUAGE0_INTRO_RENDER
         DW $1000
         DW $1003
         DW $1006
 
 ; Four language-selection native round-result entries.
 LANGUAGE_ROUND_NATIVE_VECTORS:
-        DW $089F
+        DW LANGUAGE0_ROUND_SETUP
         DW $1009
         DW $100C
         DW $100F
@@ -3146,108 +3146,100 @@ LANGUAGE_MESSAGE_OFFSETS:
         DW $1040
         DW $1060
 
+; Text is encoded using $40 for a displayed space and bit 7 on the final character.
+; ASCII quoted runs make literal lettering visible; original control bytes remain numeric.
 ; High-bit-terminated text "PLAYER".
 GAME_TEXT_PLAYER:
-        DB $50,$4C,$41,$59,$45,$D2
+        DB "PLAYE",$D2
 
 ; High-bit-terminated text "WINS".
 GAME_TEXT_WINS:
-        DB $57,$49,$4E,$D3
+        DB "WIN",$D3
 
 ; High-bit-terminated text "TIE" with display control.
 GAME_TEXT_TIE:
-        DB $08,$54,$49,$C5
+        DB $08,"TI",$C5
 
 ; High-bit-terminated text "GAME" with display control.
 GAME_TEXT_GAME:
-        DB $08,$47,$41,$4D,$C5
+        DB $08,"GAM",$C5
 
 ; High-bit-terminated text "OVER" with display control.
 GAME_TEXT_OVER:
-        DB $08,$4F,$56,$45,$D2
+        DB $08,"OVE",$D2
 
 ; High-bit-terminated "TO START GAME" instruction.
 GAME_TEXT_START_GAME:
-        DB $07,$54,$4F,$40,$53,$54,$41,$52,$54,$40,$47,$41
-        DB $4D,$C5
+        DB $07,"TO",$40,"START",$40,"GAM",$C5
 
 ; High-bit-terminated "YOU HAVE CREDIT" instruction.
 GAME_TEXT_HAVE_CREDIT:
-        DB $08,$59,$4F,$55,$40,$48,$41,$56,$45,$40,$43,$52
-        DB $45,$44,$49,$D4
+        DB $08,"YOU",$40,"HAVE",$40,"CREDI",$D4
 
 ; Player-count, start-button and additional-credit instructions.
 GAME_TEXT_START_BUTTONS:
-        DB $03,$50,$52,$45,$53,$53,$40,$31,$40,$4F,$52,$40
-        DB $32,$40,$50,$4C,$41,$59,$45,$52,$40,$42,$55,$54
-        DB $54,$4F,$4E,$23,$25,$49,$4E,$53,$45,$52,$54,$40
-        DB $41,$44,$44,$49,$54,$49,$4F,$4E,$41,$4C,$40,$43
-        DB $4F,$49,$4E,$25,$25,$46,$4F,$52,$40,$33,$40,$4F
-        DB $52,$40,$34,$40,$50,$4C,$41,$59,$45,$52,$40,$47
-        DB $41,$4D,$C5
+        DB $03,"PRESS",$40,"1",$40,"OR",$40,"2",$40,"PLAYER",$40
+        DB "BUTTON#%INSERT",$40,"ADDITIONAL",$40,"COIN%%FOR",$40,"3",$40,"OR"
+        DB $40,"4",$40,"PLAYER",$40,"GAM",$C5
 
 ; Player one through four selection instruction.
 GAME_TEXT_CHOOSE_PLAYERS:
-        DB $40,$50,$52,$45,$53,$53,$40,$31,$40,$32,$40,$33
-        DB $40,$4F,$52,$40,$34,$40,$50,$4C,$41,$59,$45,$52
-        DB $40,$42,$55,$54,$54,$4F,$CE
+        DB $40,"PRESS",$40,"1",$40,"2",$40,"3",$40,"OR",$40,"4",$40,"PLAYER"
+        DB $40,"BUTTO",$CE
 
 ; High-bit-terminated "CHECK" word.
 GAME_TEXT_CHECK:
-        DB $06,$43,$48,$45,$43,$CB
+        DB $06,"CHEC",$CB
 
 ; High-bit-terminated "INSERT" word.
 GAME_TEXT_INSERT:
-        DB $04,$49,$4E,$53,$45,$52,$D4
+        DB $04,"INSER",$D4
 
 ; Four pointers to spelled-out player numbers.
 PLAYER_NUMBER_TEXT_POINTERS:
-        DW $0F09
-        DW $0F0C
-        DW $0F0F
-        DW $0F14
+        DW GAME_TEXT_ONE
+        DW GAME_TEXT_TWO
+        DW GAME_TEXT_THREE
+        DW GAME_TEXT_FOUR
 
 ; High-bit-terminated "ONE" word.
 GAME_TEXT_ONE:
-        DB $4F,$4E,$C5
+        DB "ON",$C5
 
 ; High-bit-terminated "TWO" word.
 GAME_TEXT_TWO:
-        DB $54,$57,$CF
+        DB "TW",$CF
 
 ; High-bit-terminated "THREE" word.
 GAME_TEXT_THREE:
-        DB $54,$48,$52,$45,$C5
+        DB "THRE",$C5
 
 ; High-bit-terminated "FOUR" word.
 GAME_TEXT_FOUR:
-        DB $46,$4F,$55,$D2
+        DB "FOU",$D2
 
 ; Four pointers to round-result messages.
 ROUND_RESULT_TEXT_POINTERS:
-        DW $0F20
-        DW $0F2E
-        DW $0F3D
-        DW $0F47
+        DW GAME_TEXT_BITES_DUST
+        DW GAME_TEXT_MEETS_MAKER
+        DW GAME_TEXT_CHECKS_OUT
+        DW GAME_TEXT_PRONOUNCED_DEAD
 
 ; High-bit-terminated "BITES THE DUST" message.
 GAME_TEXT_BITES_DUST:
-        DB $42,$49,$54,$45,$53,$40,$54,$48,$45,$40,$44,$55
-        DB $53,$D4
+        DB "BITES",$40,"THE",$40,"DUS",$D4
 
 ; High-bit-terminated "MEETS HIS MAKER" message.
 GAME_TEXT_MEETS_MAKER:
-        DB $4D,$45,$45,$54,$53,$40,$48,$49,$53,$40,$4D,$41
-        DB $4B,$45,$D2
+        DB "MEETS",$40,"HIS",$40,"MAKE",$D2
 
 ; High-bit-terminated "CHECKS OUT" message.
 GAME_TEXT_CHECKS_OUT:
-        DB $43,$48,$45,$43,$4B,$53,$40,$4F,$55,$D4
+        DB "CHECKS",$40,"OU",$D4
 
 ; High-bit-terminated "PRONOUNCED DEAD" message.
 GAME_TEXT_PRONOUNCED_DEAD:
-        DB $50,$52,$4F,$4E,$4F,$55,$4E,$43,$45,$44,$40,$44
-        DB $45,$41,$C4
+        DB "PRONOUNCED",$40,"DEA",$C4
 
 ; Twelve 16-bit pointers to ROM glyphs and graphic shapes.
 FONT_AND_DRAWING_POINTERS:

@@ -4,7 +4,7 @@ Checkmate was developed by Dave Nutting Associates (DNA) and released by Midway 
 
 ![Checkmate cabinet marquee](images/checkmate-24967-marquee.jpg)
 
-Checkmate uses native 8080 game routines and shared RST services. Its language selector uses indexed 16-bit native entry points, including entries in the optional language ROM. The documented resident ROM does not use the indexed game-bytecode dispatch loop identified in DNA's Boot Hill and baseball games.
+Checkmate runs native Intel 8080 game routines with reusable RST services for timing, player indexing and table lookups. A language selector reads the cabinet's language setting, retrieves the address of a native display routine and transfers execution to it. English routines reside in the main ROM; the selection tables also contain addresses in the additional language ROM.
 
 | | |
 | --- | --- |
@@ -101,13 +101,13 @@ The reset entry is at `$0000`; native interrupt routines begin at `$0008` and `$
 | `RST $20` | `$0CA8` | Advance or wrap player index |
 | `RST $28` | `$0C99` | Select indexed 16-bit pointer |
 
-The common pointer helper at `$0C9C` reads a little-endian native address from a table. Language selection at `$0DE8` selects between native paths beginning at `$0628` and `$089F` or addresses in the optional language device. This is a native service and language-selection architecture, rather than the game-command interpreter found in other DNA titles.
+The pointer helper at `$0C9C` reads a 16-bit address from a table. The language selector at `$0DE8` extracts the cabinet language setting from input port `$02` and selects one of four native routine addresses. The caller executes `JP (HL)` to enter that routine. English entries point to `$0628` and `$089F`; other entries address `checkmat.d` at `$1000–$13FF`. Here, an assembly `DW` is a 16-bit address value, while a `RST` is a one-byte call to a native service. See [native program architecture](docs/checkmate-hard-re-20261031.md) for the concise execution sequence.
 
 See [Checkmate native services and language dispatch](docs/checkmate-hard-re-20261031.md) for the full trace.
 
 ## Graphics and text
 
-The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. An additional set of game drawing shapes begins at `$04AB`. English player and game messages begin with `GAME_TEXT_PLAYER` at `$0E54` and have individual names. Player-number text pointers at `$0F01`, round-result text pointers at `$0F18`, graphics pointers and character records, animation selectors, and player work-RAM addresses are defined as separate typed records.
+The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. An additional set of game drawing shapes begins at `$04AB`. English player and game messages begin with `GAME_TEXT_PLAYER` at `$0E54` and have individual names. Printable characters are shown as assembler string literals; `$40` represents an encoded space and the final letter has its high bit set. Player-number text pointers at `$0F01`, round-result text pointers at `$0F18`, graphics pointers and character records, animation selectors, and player work-RAM addresses are defined as separate typed records.
 
 ## Sound
 

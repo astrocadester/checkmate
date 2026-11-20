@@ -16,6 +16,8 @@ The lookup helper at `$0C9C` takes an index and table address, reads a little-en
 
 ## Language selection
 
+![Checkmate language selection: three callers and tables](../images/checkmate-language-selector.svg)
+
 The shared selector at `$0DE8` reads input port `$02`, extracts language-setting bits 5–6, and indexes the four 16-bit entries in the table supplied by its caller. The indexed-word helper at `$0C9C` returns the selected address in `HL`.
 
 Three parts of the game call the selector:

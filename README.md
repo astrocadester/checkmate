@@ -103,6 +103,29 @@ The reset entry is at `$0000`; native interrupt routines begin at `$0008` and `$
 
 The pointer helper at `$0C9C` reads a 16-bit address from a table. The shared language selector at `$0DE8` reads two bits of the cabinet language setting from input port `$02`. Three callers use it: the intro at `$0621` selects a routine from `$0E3C`; round-result presentation at `$0898` selects a routine from `$0E44`; and the message helper at `$0DD4` selects a language-specific text-address base from `$0E4C`. The first two callers use `JP (HL)` to execute native code; the third uses the address to find the text to display. See [native program architecture](docs/checkmate-hard-re-20261031.md).
 
+### Language selector and interpreter
+
+![Checkmate selector: intro, round and message tables](images/checkmate-language-selector.svg)
+
+The shared selector at `$0DE8` reads language bits 5–6 of input port `$02` and selects one of four 16-bit table entries. The **caller supplies the table**:
+
+| Caller | Table | Action |
+| --- | --- | --- |
+| Intro / player prompts `$0621` | `$0E3C` | Jump to a native intro routine |
+| Round-result display `$0898` | `$0E44` | Jump to a native round-result routine |
+| Message selection `$0DD4` | `$0E4C` | Use the selected message-table base to find display text |
+
+**Native selector versus interpreter**
+
+| Checkmate selector | Desert Gun command interpreter |
+| --- | --- |
+| Called for a specific game operation | Executes an ongoing command loop |
+| Reads cabinet language bits | Fetches the next script command |
+| Selects a native code address or message-table base | Decodes the command and finds its native handler |
+| Jumps to the routine or returns a data pointer | Executes the handler and advances through the script |
+
+A `DW` assembly *word* is a 16-bit stored value, commonly an address. An interpreted command *word* is an encoded instruction in a game script, whose execution is driven by the interpreter. Both may involve native routine address tables; only the interpreter fetches and dispatches a continuing script stream.
+
 ## Graphics and text
 
 The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. An additional set of game drawing shapes begins at `$04AB`. English player and game messages begin with `GAME_TEXT_PLAYER` at `$0E54` and have individual names. Printable characters are shown as assembler string literals; `$40` represents an encoded space and the final letter has its high bit set. Player-number text pointers at `$0F01`, round-result text pointers at `$0F18`, graphics pointers and character records, animation selectors, and player work-RAM addresses are defined as separate typed records.

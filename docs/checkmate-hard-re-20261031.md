@@ -52,7 +52,7 @@ The reconstructed English-language round/result routine:
 - `$0955–$098A`: loops through winner/result entries, `RST $20` player-index increment, `$0C9C` word-pointer fetch and timing.
 - `$098B–$0994`: clears display using `$0D11` and returns.
 
-The recovery generator now seeds both indirect native entry points rather than limiting traversal to reset/interrupt entry points. The extra branch destinations inside this routine have named loop/flow labels.
+The resident source includes both indirect native entry paths, with descriptive routine and loop labels. The original reverse-engineering generator was retired after the static source was preserved and the native build separated from code generation.
 
 ## Interpreter comparison and chronology
 
@@ -71,4 +71,4 @@ The similarity is **reuse of compact native services, pointer vectors, and 8080 
 
 Bitmap tiles and glyphs `$018A–$03E4`, high-bit-terminated text starting at `$0E54`, non-language lookup data, and padding must remain genuine data. The two identified code ranges must **not** remain `DB`. Unknown `checkmat.d` bytes must not be synthesized.
 
-Re-run `bash build.sh` with the existing bundled **zmac v1.3** and compare all rebuilt banks to their originals; original fixture SHA-256 above. **This connector-based pass did not execute the local zmac roundtrip**. Additional semantic renaming and individual table-consumer tracing are still needed. No GitHub Actions were added.
+User-provided Linux build output confirmed the baseline assembled four original 1 KB device SHA-1 values. The subsequent source cleanup replaces remaining generic labels, converts previously preserved native opcode bytes to assembly, annotates 8×10 bitmap data, and organizes the complete data tail by use. Re-run zmac v1.3 and compare all four banks after these edits; the source changes have not been assembled in the GitHub connector environment. MAME and Windows tests remain separate. Reverse-engineering scripts are removed from the production repository; the static native assembly is authoritative.

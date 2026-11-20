@@ -39,9 +39,6 @@ Technical notes, memory map, ROM research and original service documentation.
 `images/`  
 Game images and memory map.
 
-`tools/*.py`  
-Historical reverse-engineering investigation utilities only; not invoked by the build.
-
 ## Build
 
 Linux:
@@ -110,7 +107,7 @@ See [Checkmate native services and language dispatch](docs/checkmate-hard-re-202
 
 ## Graphics and text
 
-The ROM contains bitmap glyphs and tiles beginning near `$018A`, with game and player message records elsewhere in the program. The English-language display paths use the same native drawing routines and pointer-based message selection.
+The ROM contains individually labeled 8×10 font glyphs and game drawing tiles, with their raster bytes commented inline. The graphics block starts at `$0197`, following ROM-test data at `$018A`. An additional set of game drawing shapes begins at `$04AB`. English player and game messages are collected under `ENGLISH_DISPLAY_MESSAGES` at `$0E54`; the remaining ROM tables are labeled by their actual use.
 
 ## Sound
 

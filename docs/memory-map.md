@@ -11,10 +11,10 @@ Four 1 KB original resident ROM devices occupy $0000–$0FFF. The optional langu
 | $0800–$0BFF | checkmat.f | Native game routines, English-language round code at $089F |
 | $0C00–$0FFF | checkmat.e | Shared RST services, indexed pointer lookup and messages |
 | $1000–$13FF | checkmat.d, optional | Additional language entry points, not present in the reference ROM set |
-| $1400–$1FFF | No resident ROM | Consult board schematic for decoding |
+| $1400–$1FFF | Unmapped | Address interval outside resident ROM |
 | $2000–$23FF | Working RAM | Timers, input edge state, player index, game state |
 | $2400–$3FFF | Display RAM | Bitmap framebuffer |
-| $4000–$7FFF | Upper address space | Board decode and mirrors require direct schematic tracing |
+| $4000–$7FFF | Unmapped | Board mirroring and decoding remain a schematic audit item |
 
 ## Verified program regions
 

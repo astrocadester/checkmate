@@ -2,7 +2,7 @@
 
 Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../AGENTS.md). Native Intel 8080 source and original ROM bytes own the game semantics. The native build uses zmac v1.3 without source regeneration.
 
-## Current cleanup — v20261120-0001
+## Current cleanup — v20261120-0003
 
 - [x] Preserve reference `roms/original/checkmat.zip` unchanged.
 - [x] Replace Python-dependent build with direct native assembler invocation on Linux.
@@ -12,11 +12,17 @@ Governance: [ENGINEERING-RULES.md](../ENGINEERING-RULES.md) and [AGENTS.md](../A
 - [x] Match Desert Gun project README layout.
 - [x] Create Checkmate memory map in the supplied graphic style with a game-specific emblem.
 - [x] Clean source formatting and make selected flow labels descriptive, without altering assembly statements.
-- [ ] Execute both native scripts on the respective operating systems and record command output.
-- [ ] Confirm assembled 4 KB binary and four device SHA-1 values.
+- [x] Linux native build and original 1 KB device SHA-1 verification on v20261120-0002 predecessor (user-supplied output).
+- [ ] Re-run Linux native build after assembly source cleanup and verify all four device hashes.
+- [ ] Execute Windows build and record device verification output.
+- [x] Confirm baseline 4 KB image and four device SHA-1 values from supplied Linux build output.
 - [ ] Execute `mame checkmat -rompath roms -window -skip_gameinfo` and capture runtime result.
-- [ ] Complete remaining generic `FLOW_xxxx` names using traced control flow.
-- [ ] Classify remaining DB regions: font glyphs, drawing records, strings, pointer tables and padding.
+- [x] Replace all remaining generic `FLOW_xxxx` and `SUBROUTINE_xxxx` symbols with role-oriented labels.
+- [x] Classify DB regions into font glyphs, drawing records, message data, pointer tables and padding; decode identified executable DB sequences.
+- [x] Format blank lines before header comments and place comments directly above sections.
+- [x] Replace overflowing memory-map design with Extra Inning chip styling; rename unmapped areas.
+- [x] Remove duplicate original-folder PDFs and obsolete Python RE generators; preserve original ZIP.
+- [ ] Verify interpretation of individual game lookup records and sound routines against code and board documents.
 - [ ] Verify memory mirrors and I/O against board schematics.
 
 ## PR gate
